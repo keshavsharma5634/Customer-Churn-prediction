@@ -640,14 +640,13 @@ async function loadCustomers() {
     data.forEach(c => {
       CUSTOMERS.push({
         id: c.customer_id,
-        prob: c.churn_prob,
+        prob: Number(c.churn_prob),
         plan: c.plan_tier,
         tenure: c.tenure_months,
         nps: c.nps_score,
         action: c.suggested_action
       });
     });
-  });
 
     renderKPIs();
     renderTable('all');
