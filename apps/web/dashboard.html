@@ -630,6 +630,31 @@ const CUSTOMERS = [
   {id:"CUST_04422",prob:0.05,plan:"premium",tenure:72.0,nps:9,action:"No action needed"},
 ];
 
+async function loadCustomers() {
+  try {
+    const res = await fetch('https://customer-churn-prediction-q0vt.onrender.com/topk');
+    const data = await res.json();
+
+    CUSTOMERS.length = 0;
+
+    data.forEach(c => {
+      CUSTOMERS.push({
+        id: c.customer_id,
+        prob: c.churn_probability,
+        plan: c.plan || "standard",
+        tenure: c.tenure || 12,
+        nps: c.nps || 5,
+        action: "Retention campaign"
+      });
+    });
+
+    renderKPIs();
+    renderTable('all');
+
+  } catch (err) {
+    console.error("API error:", err);
+  }
+}
 const actionFired = new Set();
 let activeFilter = 'all';
 
@@ -872,8 +897,7 @@ function showToast(msg) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
-renderKPIs();
-renderTable('all');
+loadCustomers();
 </script>
 </body>
 </html>
