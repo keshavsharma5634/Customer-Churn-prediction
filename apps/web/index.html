@@ -632,12 +632,12 @@ const CUSTOMERS = [
 
 async function loadCustomers() {
   try {
-    const res = await fetch('https://customer-churn-prediction-q0vt.onrender.com/topk');
+    const res = await fetch("https://customer-churn-prediction-q0vt.onrender.com/topk");
     const data = await res.json();
 
     CUSTOMERS.length = 0;
 
-    data.forEach(c => {
+    data.forEach((c) => {
       CUSTOMERS.push({
         id: c.customer_id,
         prob: Number(c.churn_prob),
@@ -649,8 +649,7 @@ async function loadCustomers() {
     });
 
     renderKPIs();
-    renderTable('all');
-
+    renderTable("all");
   } catch (err) {
     console.error("API error:", err);
   }
@@ -897,6 +896,7 @@ function showToast(msg) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
+// Init
 loadCustomers();
 </script>
 </body>
