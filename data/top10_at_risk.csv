@@ -1,0 +1,11 @@
+customer_id,churn_prob,risk_tier,suggested_action,plan_tier,tenure_months,billing_amount,nps_score,engagement_rate,support_intensity
+CUST_07512,0.6719576815764109,High Risk,Personalized retention offer,premium,1.0,981.91,7.0,0.5666666666666667,0.0
+CUST_04196,0.5925925970077515,High Risk,Personalized retention offer,premium,1.0,1025.39,3.0,0.6,3.0
+CUST_05954,0.5126942048470179,High Risk,Personalized retention offer,premium,1.1,971.25,8.0,0.6666666666666666,1.0
+CUST_06972,0.42195768157641095,Medium Risk,Priority support callback + apology credit,basic,1.5,310.09,1.0,0.5666666666666667,6.0
+CUST_07214,0.4206349352995555,Medium Risk,Priority support callback + apology credit,standard,3.8,567.88,4.0,0.5333333333333333,11.0
+CUST_02329,0.388471191128095,Medium Risk,Personalized retention offer,premium,1.3,994.09,4.0,0.5,0.0
+CUST_02008,0.3806336522102356,Medium Risk,Personalized retention offer,standard,1.6,626.08,5.0,0.5,1.0
+CUST_06754,0.37689970930417377,Medium Risk,Personalized retention offer,standard,1.0,550.51,5.0,0.7,3.0
+CUST_06970,0.3476555397113164,Medium Risk,Personalized retention offer,premium,5.3,986.95,8.0,0.7666666666666667,0.0
+CUST_01349,0.3458937207857768,Medium Risk,Personalized retention offer,premium,1.0,1032.44,5.0,0.7,0.0
