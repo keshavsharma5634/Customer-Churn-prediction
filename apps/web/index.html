@@ -360,11 +360,104 @@
 
   @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
   .fade-in { animation: fadeIn 0.4s ease both; }
-
   .empty-state { padding: 40px; text-align: center; color: var(--muted); font-size: 13px; }
+
+  /* ── Mobile Hamburger ── */
+  .hamburger {
+    display: none;
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 100;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .hamburger span {
+    display: block; width: 20px; height: 2px;
+    background: var(--text); border-radius: 2px;
+    transition: all 0.3s;
+  }
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9;
+  }
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+
+    /* Hamburger show karo */
+    .hamburger { display: flex; }
+    .sidebar-overlay.open { display: block; }
+
+    /* Sidebar slide in */
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 50;
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Main full width */
+    .main { margin-left: 0; padding: 16px; padding-top: 60px; }
+
+    /* KPI grid — 2 columns */
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .kpi-value { font-size: 24px !important; }
+
+    /* Page header stack */
+    .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .page-title { font-size: 20px; }
+
+    /* Table scroll */
+    .card { overflow-x: auto; }
+    table { min-width: 600px; }
+    td, th { padding: 10px 12px; font-size: 11px; }
+
+    /* Panels stack */
+    .panels { grid-template-columns: 1fr; }
+
+    /* Score form — 1 column */
+    .score-form { grid-template-columns: 1fr; }
+    .score-btn { grid-column: span 1; }
+
+    /* Monitor grid — 1 column */
+    .monitor-grid { grid-template-columns: 1fr; }
+
+    /* Filter bar scroll */
+    .filter-bar { overflow-x: auto; padding-bottom: 4px; }
+    .filter-btn { white-space: nowrap; }
+
+    /* Card header stack */
+    .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+    /* Toast */
+    .toast { left: 16px; right: 16px; bottom: 16px; }
+
+    /* About grid */
+    .about-grid { grid-template-columns: 1fr !important; }
+  }
+
+  @media (max-width: 480px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .kpi-card { padding: 14px; }
+    .kpi-value { font-size: 20px !important; }
+    .result-score { font-size: 48px; }
+  }
 </style>
 </head>
 <body>
+
+<!-- Mobile Hamburger -->
+<button class="hamburger" onclick="toggleSidebar()" id="hamburger">
+  <span></span><span></span><span></span>
+</button>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="layout">
 
@@ -556,7 +649,7 @@ churn_project/
 │   └── build_notebooks.py       ← Notebook builder
 │
 └── requirements.txt             ← All Python dependencies</pre>
-      <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px" class="about-grid">
         <div style="background:var(--surface2);border-radius:8px;padding:16px;border:1px solid var(--border)">
           <div style="font-family:Syne,sans-serif;font-weight:700;margin-bottom:12px;color:var(--accent)">🧠 Model Stack</div>
           <div style="font-size:12px;line-height:2;color:var(--muted)">
@@ -608,6 +701,24 @@ churn_project/
 <div class="toast" id="toast"></div>
 
 <script>
+// ── Mobile Sidebar Toggle ─────────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+// Close sidebar when nav item clicked on mobile
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      document.querySelector('.sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }
+  });
+});
+
 // ── Synthetic churn data (mirrors notebook output) ────────────────────────
 const CUSTOMERS = [
   {id:"CUST_00312",prob:0.82,plan:"basic",tenure:3.2,nps:2,action:"Re-activation campaign"},
@@ -630,30 +741,6 @@ const CUSTOMERS = [
   {id:"CUST_04422",prob:0.05,plan:"premium",tenure:72.0,nps:9,action:"No action needed"},
 ];
 
-async function loadCustomers() {
-  try {
-    const res = await fetch("https://customer-churn-prediction-q0vt.onrender.com/topk");
-    const data = await res.json();
-
-    CUSTOMERS.length = 0;
-
-    data.forEach((c) => {
-      CUSTOMERS.push({
-        id: c.customer_id,
-        prob: Number(c.churn_prob),
-        plan: c.plan_tier,
-        tenure: c.tenure_months,
-        nps: c.nps_score,
-        action: c.suggested_action
-      });
-    });
-
-    renderKPIs();
-    renderTable("all");
-  } catch (err) {
-    console.error("API error:", err);
-  }
-}
 const actionFired = new Set();
 let activeFilter = 'all';
 
@@ -896,8 +983,8 @@ function showToast(msg) {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────
-// Init
-loadCustomers();
+renderKPIs();
+renderTable('all');
 </script>
 </body>
 </html>
