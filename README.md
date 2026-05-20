@@ -1,6 +1,6 @@
 # 🔮 Customer Churn Prediction Model
 
-> End-to-end ML system: data → features → XGBoost → FastAPI → Next.js Dashboard → MLOps
+> End-to-end ML system: data → features → XGBoost → FastAPI →  Dashboard → MLOps
 
 ---
 
@@ -198,19 +198,4 @@ churn_calibrated.joblib
 
 ---
 
-## 📚 Interview Q&A
 
-**Q: Why PR-AUC over ROC-AUC?**
-A: With ~12% churn rate (imbalanced), ROC-AUC can be overly optimistic. PR-AUC focuses on the minority class and better reflects business value.
-
-**Q: How do you prevent leakage?**
-A: Exclude all post-cycle features + use `TimeSeriesSplit` so training always precedes validation in time.
-
-**Q: Why isotonic calibration?**
-A: Raw tree model probabilities are often poorly calibrated. Isotonic calibration ensures P(churn=0.7) really means 70% chance, enabling reliable top-K ranking.
-
-**Q: How does Optuna work?**
-A: Optuna uses TPE (Tree-structured Parzen Estimator) to intelligently explore the hyperparameter space, converging on high PR-AUC configurations in ~30 trials.
-
-**Q: What triggers retraining?**
-A: PSI > 0.25 on any key feature (significant distribution shift) OR PR-AUC drops > 15% from baseline.
